@@ -89,5 +89,71 @@
     </footer>
 
     <script src="script.js"></script>
+
+    <script>
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        const token = "YOUR_SPOTIFY_ACCESS_TOKEN"; // Replace with your token
+
+        const player = new Spotify.Player({
+          name: "Web Playback SDK Player",
+          getOAuthToken: (cb) => {
+            cb(token);
+          },
+          volume: 0.5,
+        });
+
+        player.addListener("initialization_error", ({ message }) => {
+          console.error(message);
+        });
+        player.addListener("authentication_error", ({ message }) => {
+          console.error(message);
+        });
+        player.addListener("account_error", ({ message }) => {
+          console.error(message);
+        });
+        player.addListener("playback_error", ({ message }) => {
+          console.error(message);
+        });
+
+        player.addListener("ready", ({ device_id }) => {
+          console.log("Ready with Device ID", device_id);
+        });
+
+        player.connect();
+      };
+
+      // Redirection Logic: Highlight mood based on URL ?mood=1
+      const queryParams = new URLSearchParams(window.location.search);
+      const mood = queryParams.get("mood");
+
+      if (mood) {
+        console.log("Detected mood from URL:", mood);
+
+        const moodMap = {
+          1: "sad",
+          2: "angry",
+          3: "neutral",
+          4: "happy",
+          5: "surprise"
+        };
+
+        const moodName = moodMap[mood];
+        if (moodName) {
+          const moodBtn = document.querySelector(`[data-mood="${moodName}"]`);
+          if (moodBtn) {
+            moodBtn.classList.add("active");
+            // Optionally: selectMood(moodBtn, moodName);
+          }
+        }
+      }
+    </script>
+
+    <style>
+      .mood-btn.active {
+        background-color: #1db954;
+        color: white;
+        transform: scale(1.1);
+      }
+    </style>
   </body>
 </html>
